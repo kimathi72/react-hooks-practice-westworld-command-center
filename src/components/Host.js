@@ -1,37 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, {useState, useEffect} from "react";
 import { Card } from "semantic-ui-react";
 import "../stylesheets/Host.css";
 
-function Host({host, callBackFunc}) {
-  const[clsName, setClsName] = useState('')
-  const [isClicked, setIsClicked] = useState(false)
-  const [selectedHost, setSelectedHost] = useState(null)
-  
+function Host({host, selected,setSelected}) {
+  const[clsName, setClsName] = useState('host')
+  const [isClicked, setIsClicked]= useState(false)
+ 
   useEffect(()=>{
-    
-    switch (isClicked) {
+    if (selected){
+    switch (selected.id === host.id) {
       case true:
         setClsName("host selected")
-        setSelectedHost(host)        
         break;
-      case false:
+      case false: 
         setClsName("host")
-        setSelectedHost(null)
         break;
       default:
         setClsName("host")
         break;
-    }
+    }}
  
-  },[isClicked,host, setClsName])
-  useEffect(()=>{
-    if(selectedHost){
-      callBackFunc(selectedHost)
-    }
-  },[selectedHost,callBackFunc])
-  const handleClick = (e)=>{
+  },[selected,host])
+  const handleClick = ()=>{
     setIsClicked(!isClicked)
+    if (!selected){
+      setSelected(host)
+    }else if(selected.id !== host.id){
+      setSelected(host)
+    }else {
+      return
+    };
+  
   }
+  
   /* NOTE: The className "host selected" renders a different style than simply "host". */
   return (
     <Card

@@ -1,8 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Segment, Button } from "semantic-ui-react";
 import { Log } from "../services/Log";
 
-function LogPanel() {
+function LogPanel({activateAll}) {
+  const [isClicked,setIsClicked]=useState(false)
+  const [color, setColor] = useState('red')
+  const [content,setContent] = useState('')
+  useEffect(()=>{
+    switch (isClicked) {
+      case true:
+        setColor('green')
+        setContent("DECOMMISSION ALL")
+        break;
+    
+      default:
+        setColor('red')
+        setContent("ACTIVATE ALL")
+        break;
+    }
+  },[isClicked])
+  const handleClick = () => {
+    setIsClicked(!isClicked)
+    activateAll('active',isClicked)
+  }
   function dummyLogs() {
     // This is just to show you how this should work. But where should the log data actually get stored?
     // And where should we be creating logs in the first place?
@@ -31,7 +51,7 @@ function LogPanel() {
       {/* Button below is the Activate All/Decommisssion All button */}
       {/* This isn't always going to be the same color...*/}
       {/* Should the button always read "ACTIVATE ALL"? When should it read "DECOMMISSION ALL"? */}
-      <Button fluid color={"red"} content={"ACTIVATE ALL"} />
+      <Button onClick={handleClick} fluid color={color} content={content} />
     </Segment>
   );
 }

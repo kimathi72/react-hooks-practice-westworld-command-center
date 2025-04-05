@@ -1,8 +1,8 @@
 import React from "react";
 import "../stylesheets/Area.css";
-import HostList from './HostList.js'
 
-function Area({area, hosts, callBackFunc}) {
+
+function Area({area, hosts, children}) {
   return (
     <div
       className="area"
@@ -13,7 +13,7 @@ function Area({area, hosts, callBackFunc}) {
       <h3 className="labels">
         {(area.name.split('_').map(str=>str.charAt(0).toUpperCase() + str.slice(1)).join(" "))}
       </h3>
-      <HostList hosts={hosts} callBackFunc={callBackFunc}/>
+      {React.cloneElement(children, {hosts: hosts})}
     </div>
   );
 }

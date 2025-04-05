@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Radio,
   Icon,
@@ -22,6 +22,9 @@ function HostInfo({host}) {
   ]);
 
   const [value] = useState("some_area");
+  useEffect(()=>{
+    console.log(host)
+  },[host])
 
   function handleOptionChange(e, { value }) {
     // the 'value' attribute is given via Semantic's Dropdown component.
@@ -55,8 +58,8 @@ function HostInfo({host}) {
               {/* Checked takes a boolean and determines what position the switch is in. Should it always be true? */}
               <Radio
                 onChange={handleRadioChange}
-                label={"Active"}
-                checked={true}
+                label={host.active ? "Active" : "Decommissioned"}
+                checked={host.active}
                 slider
               />
             </Card.Meta>
