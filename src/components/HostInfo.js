@@ -9,19 +9,34 @@ import {
   Divider,
 } from "semantic-ui-react";
 import "../stylesheets/HostInfo.css";
+import { Log } from "../services/Log";
 
-function HostInfo({host}) {
+function HostInfo({host, areas,hosts,addLogs, changeArea}) {
   // This state is just to show how the dropdown component works.
   // Options have to be formatted in this way (array of objects with keys of: key, text, value)
   // Value has to match the value in the object to render the right text.
 
   // IMPORTANT: But whether it should be stateful or not is entirely up to you. Change this component however you like.
-  const [options] = useState([
-    { key: "some_area", text: "Some Area", value: "some_area" },
-    { key: "another_area", text: "Another Area", value: "another_area" },
-  ]);
+  // const [options] = useState([
+  //   { key: "some_area", text: "Some Area", value: "some_area" },
+  //   { key: "another_area", text: "Another Area", value: "another_area" },
+  // ]);
+const [options,setOptions] = useState([])
+useEffect(() => {
+  const newOptions = areas.map((area) => {
+    return {key: area.name, text: area.name.split('_').map(str=>str.charAt(0).toUpperCase() + str.slice(1)).join(" "), value: area.name}
+  })
+  setOptions(newOptions)
+},[areas])
+  // const [value] = useState("some_area");
+  const [value, setValue] = useState('')
+  const [checked, setChecked] = useState(false);
 
-  const [value] = useState("some_area");
+  useEffect(() => {
+    setValue(host.area)
+    setChecked(host.active)
+  },[host])
+
   useEffect(()=>{
     console.log(host)
   },[host])
@@ -30,10 +45,28 @@ function HostInfo({host}) {
     // the 'value' attribute is given via Semantic's Dropdown component.
     // Put a debugger or console.log in here and see what the "value" variable is when you pass in different options.
     // See the Semantic docs for more info: https://react.semantic-ui.com/modules/dropdown/#usage-controlled
+    let selectedArea = areas.find(area => area.name === value) 
+    let totalAreaHosts = hosts.filter(host=>host.area===value)
+    if (totalAreaHosts.length >= selectedArea.limit){
+      addLogs(Log.error(`Too many hosts. cannot add ${host.firstName} to ${value.split('_').map(str=>str.charAt(0).toUpperCase() + str.slice(1)).join(" ")}`))
+    }else{
+      
+      changeArea(host.id,"area",value) 
+      addLogs(Log.notify(`${host.firstName} set in area ${value.split('_').map(str=>str.charAt(0).toUpperCase() + str.slice(1)).join(" ")}`))
+     return setValue(value)}
   }
 
   function handleRadioChange() {
+    
     console.log("The radio button fired");
+    changeArea(host.id,"active",!checked)
+    if (!checked){
+      addLogs(Log.warn(` Activated ${host.firstName}`))
+    }else{
+      addLogs(Log.notify(` Deactivated ${host.firstName}`))
+    }
+    return setChecked(!checked);
+    
   }
 
   return (
@@ -58,8 +91,8 @@ function HostInfo({host}) {
               {/* Checked takes a boolean and determines what position the switch is in. Should it always be true? */}
               <Radio
                 onChange={handleRadioChange}
-                label={host.active ? "Active" : "Decommissioned"}
-                checked={host.active}
+                label={checked ? "Active" : "Decommissioned"}
+                checked={checked}
                 slider
               />
             </Card.Meta>

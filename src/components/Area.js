@@ -3,6 +3,7 @@ import "../stylesheets/Area.css";
 
 
 function Area({area, hosts, children}) {
+  
   return (
     <div
       className="area"

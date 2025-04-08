@@ -16,6 +16,7 @@ function App() {
   const [areas, setAreas] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [logs, setLogs] = useState([])
   const fetchData = useCallback(async (url, func) => {
     try {
       const response = await fetch("http://localhost:3001/" + url);
@@ -41,7 +42,19 @@ function App() {
     });
     setHosts(newHosts);
   };
+  const changeArea= (id,key, value)=>{
+    let newHost = {...selected}
+    newHost[`${key}`]= value
+    setSelected(newHost)
+    let index = hosts.indexOf(hosts.find(host=>host.id===id))
+    let newHosts = [...hosts]
+    newHosts.splice(index,1,newHost)
+    setHosts(newHosts)
 
+  }
+  const addLogs = (log)=>{
+    setLogs([log,...logs])
+  }
   return (
     <Segment id="app">
       {/* What components should go here? Check out Checkpoint 1 of the Readme if you're confused */}
@@ -49,7 +62,6 @@ function App() {
         <>
           <WestworldMap>
             {areas.map((area, index) => {
-              console.log(hosts);
               return (
                 <Area
                   key={index}
@@ -72,9 +84,9 @@ function App() {
               </HostList>
             </ColdStorage>
             <Details host={selected}>
-              <HostInfo />
+              <HostInfo addLogs={addLogs} areas={areas} hosts={hosts} changeArea={changeArea}/>
             </Details>
-            <LogPanel activateAll={activateAll} />
+            <LogPanel logs={logs} addLogs={addLogs} activateAll={activateAll} />
           </Headquarters>
         </>
       ) : (

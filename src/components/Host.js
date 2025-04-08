@@ -12,9 +12,6 @@ function Host({host, selected,setSelected}) {
       case true:
         setClsName("host selected")
         break;
-      case false: 
-        setClsName("host")
-        break;
       default:
         setClsName("host")
         break;
