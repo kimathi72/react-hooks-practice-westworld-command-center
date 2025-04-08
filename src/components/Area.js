@@ -2,7 +2,7 @@ import React from "react";
 import "../stylesheets/Area.css";
 
 
-function Area({area, hosts, children}) {
+function Area({area, hosts,splitAndCapitalize, children}) {
   
   return (
     <div
@@ -12,7 +12,7 @@ function Area({area, hosts, children}) {
       }
     >
       <h3 className="labels">
-        {(area.name.split('_').map(str=>str.charAt(0).toUpperCase() + str.slice(1)).join(" "))}
+        {splitAndCapitalize(area.name)}
       </h3>
       {React.cloneElement(children, {hosts: hosts})}
     </div>
