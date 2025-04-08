@@ -17,7 +17,7 @@ function HostInfo({
   hosts,
   addLogs,
   splitAndCapitalize,
-  changeArea,
+  toggleHostInfo,
 }) {
  
   const [options, setOptions] = useState([]);
@@ -51,28 +51,24 @@ function HostInfo({
     if (totalAreaHosts.length >= selectedArea.limit) {
       addLogs(
         Log.error(
-          `Too many hosts. cannot add ${host.firstName} to ${splitAndCapitalize(
+          `Too many hosts. Cannot add ${host.firstName} to ${splitAndCapitalize(
             value
           )}`
         )
       );
     } else {
-      changeArea(host.id, "area", value);
+      toggleHostInfo(host.id, "area", value);
       addLogs(
         Log.notify(`${host.firstName} set in area ${splitAndCapitalize(value)}`)
       );
       return setValue(value);
     }
   }
-
+// toggle activate host slider function
   function handleRadioChange() {
     console.log("The radio button fired");
-    changeArea(host.id, "active", !checked);
-    if (!checked) {
-      addLogs(Log.warn(` Activated ${host.firstName}`));
-    } else {
-      addLogs(Log.notify(` Deactivated ${host.firstName}`));
-    }
+    toggleHostInfo(host.id, "active", !checked);
+    (!checked) ? addLogs(Log.warn(` Activated ${host.firstName}`)) : addLogs(Log.notify(` Decommissioned ${host.firstName}`));
     return setChecked(!checked);
   }
 

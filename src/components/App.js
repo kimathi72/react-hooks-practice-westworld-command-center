@@ -12,11 +12,13 @@ import Details from "./Details";
 import HostInfo from "./HostInfo.js";
 
 function App() {
+  // initialize state for hosts, areas, selected host loads and isloaded
   const [hosts, setHosts] = useState(null);
   const [areas, setAreas] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [selected, setSelected] = useState(null);
   const [logs, setLogs] = useState([]);
+  // define fetch data callback fn, returns this.setState()
   const fetchData = useCallback(async (url, func) => {
     try {
       const response = await fetch("http://localhost:3001/" + url);
@@ -29,20 +31,24 @@ function App() {
   useEffect(() => {
     if (areas && hosts) setIsLoaded(true);
   }, [areas, hosts]);
+
+  // fetch data on mount
   useEffect(() => {
     if (!isLoaded) {
       fetchData("hosts", setHosts);
       fetchData("areas", setAreas);
     }
   }, [fetchData, isLoaded]);
-  const activateAll = (key, status) => {
+  // callbackfn toggles all host[active]: status in hosts array
+  const toggleActivateAll = (status) => {
     let newHosts = [...hosts].map((host) => {
-      host[`${key}`] = status;
+      host["active"] = status;
       return host;
     });
     setHosts(newHosts);
   };
-  const changeArea = (id, key, value) => {
+  // callbackfn toggles host[key]: value in hosts array
+  const toggleHostInfo = (id, key, value) => {
     let newHost = { ...selected };
     newHost[`${key}`] = value;
     setSelected(newHost);
@@ -51,18 +57,17 @@ function App() {
     newHosts.splice(index, 1, newHost);
     setHosts(newHosts);
   };
-  const addLogs = (log) => {
-    setLogs([log, ...logs]);
-  };
-  const splitAndCapitalize = (str) => {
-    return str
+  const addLogs = (log) => setLogs([log, ...logs]);
+  // callbackfn splits sting and capitalizes first letter of every word in the string
+  const splitAndCapitalize = (str) =>
+    str
       .split("_")
       .map((str) => str.charAt(0).toUpperCase() + str.slice(1))
       .join(" ");
-  };
+
   return (
     <Segment id="app">
-      {/* What components should go here? Check out Checkpoint 1 of the Readme if you're confused */}
+      {/* What components should go here? Check out Checkpoint 1 of the Readme if you're confused... {WestworldMap:{Area:{HostList:{Host}}}, Headquaters:{ColdStorage: {HostList:{Host}},Details: {HostInfo},LogPanel}} */}
       {isLoaded ? (
         <>
           <WestworldMap>
@@ -95,10 +100,14 @@ function App() {
                 addLogs={addLogs}
                 areas={areas}
                 hosts={hosts}
-                changeArea={changeArea}
+                toggleHostInfo={toggleHostInfo}
               />
             </Details>
-            <LogPanel logs={logs} addLogs={addLogs} activateAll={activateAll} />
+            <LogPanel
+              logs={logs}
+              addLogs={addLogs}
+              toggleActivateAll={toggleActivateAll}
+            />
           </Headquarters>
         </>
       ) : (

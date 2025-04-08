@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Segment, Button } from "semantic-ui-react";
 import { Log } from "../services/Log";
 
-function LogPanel({logs,addLogs,activateAll}) {
+function LogPanel({logs,addLogs,toggleActivateAll}) {
   const [isClicked,setIsClicked]=useState(false)
   const [color, setColor] = useState('red')
   const [content,setContent] = useState('')
@@ -21,11 +21,11 @@ function LogPanel({logs,addLogs,activateAll}) {
   },[isClicked])
   const handleClick = () => {
     
-    activateAll('active',!isClicked)
+    toggleActivateAll(!isClicked)
     if (!isClicked){
-          addLogs(Log.warn(` Activated all hosts`))
+          addLogs(Log.warn(` Activating all hosts!`))
         }else{
-          addLogs(Log.notify(` Deactivated  all hosts`))
+          addLogs(Log.notify(` Decommissioning  all hosts.`))
         }
     setIsClicked(!isClicked)
   }
